@@ -42,7 +42,6 @@ func (s ParcelService) Register(client int, address string) (Parcel, error) {
 	if err != nil {
 		return parcel, err
 	}
-
 	parcel.Number = id
 
 	fmt.Printf("Новая посылка № %d на адрес %s от клиента с идентификатором %d зарегистрирована %s\n",
@@ -103,6 +102,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	defer db.Close()
 	store := NewParcelStore(db)
 	service := NewParcelService(store)
 
@@ -114,7 +114,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
+	
 	// изменение адреса
 	newAddress := "Саратов, д. Верхние Зори, ул. Козлова, д. 25"
 	err = service.ChangeAddress(p.Number, newAddress)

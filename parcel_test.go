@@ -32,9 +32,7 @@ func getTestParcel() Parcel {
 func TestAddGetDelete(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -48,11 +46,9 @@ func TestAddGetDelete(t *testing.T) {
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 	p, err := store.Get(addedId)
+	parcel.Number = addedId
 	require.NoError(t, err)
-	require.Equal(t, parcel.Client, p.Client)
-	require.Equal(t, parcel.Status, p.Status)
-	require.Equal(t, parcel.Address, p.Address)
-	require.Equal(t, parcel.CreatedAt, p.CreatedAt)
+	require.Equal(t,parcel, p)
 	// delete
 	// удалите добавленную посылку, убедитесь в отсутствии ошибки
 	err = store.Delete(addedId)
@@ -67,9 +63,7 @@ func TestAddGetDelete(t *testing.T) {
 func TestSetAddress(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -94,9 +88,7 @@ func TestSetAddress(t *testing.T) {
 func TestSetStatus(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 	parcel := getTestParcel()
 	store := NewParcelStore(db)
@@ -120,9 +112,7 @@ func TestSetStatus(t *testing.T) {
 func TestGetByClient(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 	store := NewParcelStore(db)
 	parcels := []Parcel{
@@ -164,10 +154,7 @@ func TestGetByClient(t *testing.T) {
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		require.True(t, ok)
 		// убедитесь, что значения полей полученных посылок заполнены верно
-		require.Equal(t, parcelMap[parcel.Number].Number, parcel.Number)
-		require.Equal(t, parcelMap[parcel.Number].Client, parcel.Client)
-		require.Equal(t, parcelMap[parcel.Number].Status, parcel.Status)
-		require.Equal(t, parcelMap[parcel.Number].Address, parcel.Address)
-		require.Equal(t, parcelMap[parcel.Number].CreatedAt, parcel.CreatedAt)	
+		require.Equal(t, parcelMap[parcel.Number], parcel)
+		
 	}
 }
